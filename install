@@ -1,8 +1,12 @@
 #!/bin/bash
 
-echo "To start LinuxCNC preconfigured for PocketNC, simply type:"
-echo "	PocketNC"
+if (( $EUID != 0 )); then
+    echo "Try sudo ./install"
+    exit
+fi
 
+clear
+ 
 echo '#!/bin/bash' > /usr/bin/PocketNC
 echo "linuxcnc $PWD/PocketNC.ini" >> /usr/bin/PocketNC
 chown 750 /usr/bin/PocketNC
@@ -11,3 +15,84 @@ chmod +x /usr/bin/PocketNC
 chmod +x dtc.sh
 ./dtc.sh
 
+declare mountdir=/mnt/usbdrive
+
+read -p "Would you like to enable windows drag&drop file uploading? (y/n)" -n 1 -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+	#Test for inet access to repository.
+	wget -q --spider http://repos.rcn-ee.net
+	if [ $? -gt 0 ]; then
+		#Not online. Try to connect.
+		echo "Your BBB may need to gather some additional files from the internet."
+		read -p "Would you like to use the ethernet jack to download them?(y/n)" -n 1 -r
+		echo
+		if [[ $REPLY =~ ^[Yy]$ ]]; then
+			echo "Getting IP address..."
+			dhclient eth0
+		else
+			echo "Skipping internet connection."
+		fi
+	fi
+	#check if mount directory exists.
+	if [ -d  $mountdir ]; then
+		#Check for for existing mount point.
+		echo "Found existing mount point."
+	else
+		echo "Creating mount point to access USB storage."
+		mkdir -p /mnt/usbdrive
+	fi
+
+	#Now that the mount point is setup, add it to /etc/fstab for auto-mount at boot.
+	if ! grep -Fq "$mountdir" /etc/fstab
+		if ! mount | grep -q  /mnt/usbdrive;then
+			mount /dev/sda1 /mnt/usbdrive > /dev/null
+		fi
+	then
+		#Found an existing entry.
+		echo "Existing mount point entry found in /etc/fstab"
+		echo "   If you are just re-installing PocketNC settings dont worry about it."
+		echo "   Otherwise you will need edit the file by hand to mount"
+		echo "	your storage device to /mnt/usbdrive"
+	else
+		echo "Adding auto-mount entry to /etc/fstab"
+		echo "/dev/sda1 /mnt/usbdrive autofs rw,users,exec,nofail" >> /etc/fstab
+	fi
+
+	#Check for samba, and if needed, install it.
+	if ! which smbstatus > /dev/null; then
+		wget -q --spider http://repos.rcn-ee.net
+		if [ $? -gt 0 ]; then
+			echo "Samba server not found, unable to continue without downloading it."
+			exit 1;
+		else
+			echo "Updating package lists."
+			apt-get update
+			echo "Installing Samba server."
+			apt-get install samba
+			#wait for samba server to init.
+			echo "waiting 10sec for samba to setup..."
+			sleep 10
+		fi
+		if grep -Fxq "[PocketNC]" /etc/samba/smb.conf
+		then
+			echo "PocketNC networking share previously setup, skipped."
+		else
+			echo "Creating PocketNC network share."
+			echo "[PocketNC]" >> /etc/samba/smb.conf
+			echo "comment = PocketNC G-Code Files" >> /etc/samba/smb.conf
+			echo "path = /mnt/usbdrive" >> /etc/samba/smb.conf
+			echo "browseable = yes" >> /etc/samba/smb.conf
+			echo "writeable = yes" >> /etc/samba/smb.conf
+			echo "guest ok = yes" >> /etc/samba/smb.conf
+			echo "read only = no" >> /etc/samba/smb.conf
+		fi
+	fi
+	echo "Network file sharing (aka Drive-mapping) should now be available to any"
+	echo "	computers the BBB is networked with."
+else
+	echo "Sharing skipped."
+fi
+
+echo "To start LinuxCNC preconfigured for PocketNC, simply type:"
+echo "	PocketNC"
