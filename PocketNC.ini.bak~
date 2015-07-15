@@ -1,7 +1,6 @@
 [PRUCONF]
 DRIVER=hal_pru_generic
-CONFIG=prucode=/usr/lib/linuxcnc/xenomai/pru_generic.bin pru=1 num_stepgens=5 num_pwmgens=4
-
+CONFIG=prucode=/home/linuxcnc/linuxcnc/rtlib/xenomai/pru_generic.bin pru=1 num_stepgens=5 num_pwmgens=4
 
 [EMC]
 
@@ -22,7 +21,6 @@ DEBUG = 0
 #DISPLAY = tkemc
 #DISPLAY = gscreen
 DISPLAY = axis
-#DISPLAY = gmoccapy
 
 # Touchy currently won't work without some hardware buttons/jog-wheel
 #DISPLAY = touchy
@@ -43,17 +41,17 @@ POSITION_FEEDBACK =     ACTUAL
 MAX_FEED_OVERRIDE =     1.5
 
 # Prefix to be used
-PROGRAM_PREFIX = ~/ncfiles/
+PROGRAM_PREFIX = ~/linuxcnc/nc_files/
 
 # Introductory graphic
 #INTRO_GRAPHIC =         linuxcnc.gif
 #INTRO_TIME =            3
 
 # Increments for the JOG section
-INCREMENTS =   0.01 0.001 .0005
+INCREMENTS = 10 1 0.1 0.01
 
 
-PYVCP = PocketNC.panel.xml
+#PYVCP = BeBoPr.panel.xml
 
 [FILTER]
 PROGRAM_EXTENSION = .png,.gif,.jpg Grayscale Depth Image
@@ -67,8 +65,7 @@ py = python
 [TASK]
 
 # Name of task controller program, e.g., milltask
-#TASK =                  milltask
-TASK = milltask
+TASK =                  milltask
 
 # Cycle time, in seconds, that task controller will sleep between polls
 CYCLE_TIME =            0.010
@@ -107,7 +104,7 @@ SERVO_PERIOD =          1000000
 
 # list of hal config files to run through halcmd
 # files are executed in the order in which they appear
-HALUI =	halui
+
 HALFILE =		PocketNC.hal
 
 # list of halcmd commands to execute
@@ -121,20 +118,15 @@ POSTGUI_HALFILE =       PocketNC.postgui.hal
 
 AXES =                  5
 COORDINATES =           X Y Z A B
-MAX_ANGULAR_VELOCITY = 85
-DEFAULT_ANGULAR_VELOCITY = 40
+MAX_ANGULAR_VELOCITY = 5
+DEFAULT_ANGULAR_VELOCITY = 10
 LINEAR_UNITS =          inch
 ANGULAR_UNITS =         degree
 CYCLE_TIME =            0.010
 DEFAULT_VELOCITY = 0.5
-MAX_LINEAR_VELOCITY = 1
-BASE_PERIOD = 2
+MAX_LINEAR_VELOCITY = 2.00
 
 
-[HALUI]
-MDI_COMMAND = G0 X2.5 Y2.5 Z2 A0 B0
-MDI_COMMAND = G0 X0 Y0 Z2 A90 B0
-MDI_COMMAND = G0 X-2 Z2
 
 
 
@@ -154,37 +146,35 @@ MDI_COMMAND = G0 X-2 Z2
 
 
 TYPE =              LINEAR
-MAX_VELOCITY =       .6666
-MAX_ACCELERATION =   30
+MAX_VELOCITY =       3.0
+MAX_ACCELERATION =   15.0
 # Set Stepgen max 20% higher than the axis
-STEPGEN_MAX_VEL =    .8
-STEPGEN_MAX_ACC =    38
+STEPGEN_MAX_VEL =    3.6
+STEPGEN_MAX_ACC =    18.0
 
 BACKLASH =           0.000
 
 # scale is 200 steps/rev * 5 revs/inch
-# change number to positive or negitive to reverse direction of positive 
-SCALE =  8333.333333333333333
+SCALE =  -4166.666666666666666667
 
-MIN_LIMIT =            -2.5
-MAX_LIMIT =             2.52
+MIN_LIMIT =             -2.5
+MAX_LIMIT =             2.5
+
 FERROR =     1.0
 MIN_FERROR = 0.25
 
-HOME =                  2.5
-HOME_OFFSET =           2.539
-HOME_SEARCH_VEL =      0.15
-HOME_LATCH_VEL =        0.025
-HOME_IS_SHARED = 0
+HOME =                  0.000
+HOME_OFFSET =           0.00
+#HOME_SEARCH_VEL =       0.10
+#HOME_LATCH_VEL =        -0.01
 #HOME_USE_INDEX =        YES
-HOME_IGNORE_LIMITS =    YES
-HOME_SEQUENCE = 1
+#HOME_IGNORE_LIMITS =    YES
 
 # these are in nanoseconds
-DIRSETUP   =              4000
-DIRHOLD    =               4000
-STEPLEN    =                4000
-STEPSPACE  =              4000
+DIRSETUP   =              200
+DIRHOLD    =              200
+STEPLEN    =              1000
+STEPSPACE  =              1000
 
 
 
@@ -192,37 +182,34 @@ STEPSPACE  =              4000
 [AXIS_1]
 
 TYPE =              LINEAR
-MAX_VELOCITY =       .6666
-MAX_ACCELERATION =  30
+MAX_VELOCITY =       3.0
+MAX_ACCELERATION =   15.0
 # Set Stepgen max 20% higher than the axis
-STEPGEN_MAX_VEL =    .8
-STEPGEN_MAX_ACC =    36
+STEPGEN_MAX_VEL =    3.6
+STEPGEN_MAX_ACC =    18.0
 
 BACKLASH =           0.000
 
-SCALE =  8333.3333333333333
-#SCALE =  -4166.666666666666666667
+SCALE =  -4166.666666666666666667
 
 MIN_LIMIT =             -2.5
-MAX_LIMIT =             2.52
+MAX_LIMIT =             2.5
 
 FERROR =     1.0
-MIN_FERROR = 2.75
+MIN_FERROR = 0.25
 
-HOME =                  2.5
-HOME_OFFSET =          2.6285
-HOME_SEARCH_VEL =       .15
-HOME_LATCH_VEL =        0.025
-HOME_IS_SHARED = 0
+HOME =                  0.000
+HOME_OFFSET =           0.00
+#HOME_SEARCH_VEL =       0.10
+#HOME_LATCH_VEL =        -0.01
 #HOME_USE_INDEX =        YES
-HOME_IGNORE_LIMITS =    YES
-HOME_SEQUENCE = 1
+#HOME_IGNORE_LIMITS =    YES
 
 # these are in nanoseconds
-DIRSETUP   =              4000
-DIRHOLD    =              4000
-STEPLEN    =              4000
-STEPSPACE  =             4000
+DIRSETUP   =              200
+DIRHOLD    =              200
+STEPLEN    =              1000
+STEPSPACE  =              1000
 
 
 
@@ -230,35 +217,34 @@ STEPSPACE  =             4000
 [AXIS_2]
 
 TYPE =              LINEAR
-MAX_VELOCITY =      .6666
-MAX_ACCELERATION =  30
+MAX_VELOCITY =      5.0
+MAX_ACCELERATION =  25.0
 # Set Stepgen max 20% higher than the axis
-STEPGEN_MAX_VEL =   .8
-STEPGEN_MAX_ACC =   38
+STEPGEN_MAX_VEL =    6.0
+STEPGEN_MAX_ACC =    30.0
 
 BACKLASH =           0.000
 
-SCALE = 8333.33333333333
+SCALE = 4000
 
-MIN_LIMIT =             -3.55
-MAX_LIMIT =             .15
+MIN_LIMIT =             -2.5
+MAX_LIMIT =             2.5
 
 FERROR =     1.0
 MIN_FERROR = 0.25
 
-HOME =                  0
-HOME_OFFSET =           0.0122
-HOME_SEARCH_VEL =       .15
-HOME_LATCH_VEL =        .025
-HOME_IS_SHARED = 0
+HOME =                  0.000
+HOME_OFFSET =           0.00
+#HOME_SEARCH_VEL =       0.10
+#HOME_LATCH_VEL =        -0.01
 #HOME_USE_INDEX =        YES
-HOME_IGNORE_LIMITS =    YES
-HOME_SEQUENCE = 0
+#HOME_IGNORE_LIMITS =    YES
+
 # these are in nanoseconds
-DIRSETUP   =             4000
-DIRHOLD    =            4000
-STEPLEN    =              4000
-STEPSPACE  =              4000
+DIRSETUP   =              200
+DIRHOLD    =              200
+STEPLEN    =              1000
+STEPSPACE  =              1000
 
 
 
@@ -266,52 +252,50 @@ STEPSPACE  =              4000
 [AXIS_3]
 
 TYPE = ANGULAR
-MAX_VELOCITY = 30
-MAX_ACCELERATION = 1500
+MAX_VELOCITY = 5
+MAX_ACCELERATION = 50
 # Set Stepgen max 20% higher than the axis
-STEPGEN_MAX_VEL = 36
-STEPGEN_MAX_ACC = 1800
+STEPGEN_MAX_VEL = 6
+STEPGEN_MAX_ACC = 60
 
-BACKLASH =           0.03
+BACKLASH =           0.000
 
-#SCALE = 22.222
+SCALE = 8.889
 #SCALE = 360
-SCALE = 35.555555555555555
+#SCALE = -732.32
 
-MIN_LIMIT = -5
-MAX_LIMIT = 95
+MIN_LIMIT = -185
+MAX_LIMIT = 185
 
 FERROR = 5.0
 MIN_FERROR = .5
 
-HOME =                  0
-HOME_OFFSET =           2.301
-HOME_SEARCH_VEL =       -10
-HOME_LATCH_VEL =         -1
-HOME_IS_SHARED = 0
-HOME_IGNORE_LIMITS =    YES
-HOME_SEQUENCE = 2
-VOLATILE_HOME = 1
+HOME = 0.0
+HOME_OFFSET = 0.0
+#HOME_SEARCH_VEL =       0.10
+#HOME_LATCH_VEL =        -0.01
+#HOME_USE_INDEX =        YES
+#HOME_IGNORE_LIMITS =    YES
 
 # these are in nanoseconds
-DIRSETUP   =              4000
-DIRHOLD    =              4000
-STEPLEN    =              4000
-STEPSPACE  =              4000
+DIRSETUP   =              200
+DIRHOLD    =              200
+STEPLEN    =              1000
+STEPSPACE  =              1000
 
 
 [AXIS_4]
 
 TYPE = ANGULAR
-MAX_VELOCITY = 40
-MAX_ACCELERATION = 2400
+MAX_VELOCITY = 5
+MAX_ACCELERATION = 50
 # Set Stepgen max 20% higher than the axis
-STEPGEN_MAX_VEL = 48
-STEPGEN_MAX_ACC = 2880
+STEPGEN_MAX_VEL = 12
+STEPGEN_MAX_ACC = 60
 
 BACKLASH =           0.000
 
-SCALE = 35.555555555555555
+SCALE = 8.889
 #SCALE = 360
 #SCALE = -732.32
 
@@ -323,19 +307,17 @@ FERROR = 5.0
 MIN_FERROR = .5
 
 HOME = 0.0
-HOME_OFFSET = -3
-HOME_SEARCH_VEL =       10
-HOME_LATCH_VEL =        1
-HOME_IS_SHARED = 0
+HOME_OFFSET = 0.0
+#HOME_SEARCH_VEL =       0.10
+#HOME_LATCH_VEL =        -0.01
 #HOME_USE_INDEX =        YES
 #HOME_IGNORE_LIMITS =    YES
-HOME_SEQUENCE = 2
 
 # these are in nanoseconds
-DIRSETUP   =              4000
-DIRHOLD    =              4000
-STEPLEN    =              4000
-STEPSPACE  =              4000
+DIRSETUP   =              200
+DIRHOLD    =              200
+STEPLEN    =              1000
+STEPSPACE  =              1000
 
 
 [EMCIO]
@@ -344,7 +326,7 @@ STEPSPACE  =              4000
 EMCIO =                 io
 
 # cycle time, in seconds
-CYCLE_TIME =            0.050
+CYCLE_TIME =            0.100
 
 # tool table file
 TOOL_TABLE =            tool.tbl
